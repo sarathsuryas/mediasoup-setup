@@ -8,11 +8,18 @@ const config = require('./config')
 const path = require('path')
 const Room = require('./Room')
 const Peer = require('./Peer')
+app.set('view engine', 'ejs');
+
+app.use(express.static('public'));
 
 const options = {
   key: fs.readFileSync(path.join(__dirname, config.sslKey), 'utf-8'),
   cert: fs.readFileSync(path.join(__dirname, config.sslCrt), 'utf-8')
 }
+
+app.get('/',(req,res)=>{
+  res.render('index.ejs')
+})
 
 const httpsServer = https.createServer(options, app)
 const io = require('socket.io')(httpsServer)
@@ -20,6 +27,7 @@ const io = require('socket.io')(httpsServer)
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
 httpsServer.listen(config.listenPort, () => {
+
   console.log('Listening on https://' + config.listenIp + ':' + config.listenPort)
 })
 
